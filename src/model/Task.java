@@ -2,6 +2,7 @@ package model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 public class Task {
 
@@ -24,7 +25,8 @@ public class Task {
     }
 
     public Task(Long id, String description, TaskStatus status, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = ++Task.lastId;
+        ++Task.lastId;
+        this.id = id;
         this.description = description;
         this.status = status;
         this.createdAt = createdAt;
@@ -55,8 +57,8 @@ public class Task {
         String idString = dataJson[0].split(":")[1].strip();
         String description = dataJson[1].split(":")[1].strip();
         String statusString = dataJson[2].split(":")[1].strip();
-        String createdAtString = dataJson[3].split(":")[1].strip();
-        String updatedAtString = dataJson[4].split(":")[1].strip();
+        String createdAtString = dataJson[3].split("[a-z]:")[1].strip();
+        String updatedAtString = dataJson[4].split("[a-z]:")[1].strip();
 
         Long id = Long.parseLong(idString);
 

@@ -16,4 +16,6 @@ public interface ITaskRepository {
     List<Task> findAllTask();
     List<Task> findAllTaskFilter(TaskStatus taskStatus);
     
+    void saveChange();
+
 }

@@ -3,6 +3,7 @@ package repository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +15,7 @@ import model.TaskStatus;
 
 public class TaskRepositoryImpl implements ITaskRepository{
 
-    private static final Path JSON_PATH = Path.of("src/tasks.json");
+    private static final Path JSON_PATH = Path.of("tasks.json");
     private static List<Task> listTasks;
 
     public TaskRepositoryImpl(){
@@ -29,16 +30,20 @@ public class TaskRepositoryImpl implements ITaskRepository{
 
             if(Files.notExists(JSON_PATH)){
                 Files.createFile(JSON_PATH);
-                return new ArrayList<>();
+                return auxListTasks;
             }
     
             String jsonData = Files.readString(JSON_PATH);
-    
-            String[] jsonTasks = jsonData.replace("[", "")
-                                            .replace("]", "")
-                                            .replace("},{", "}|{")
-                                            .split("|"); 
-    
+
+            if(jsonData.isBlank()){
+                return auxListTasks;
+            }
+
+            String[] jsonTasks = jsonData.replace("[\n", "")
+                                            .replace("\n]" , "")                                           
+                                            .replace("},\n{", "}/{")
+                                            .split("/"); 
+
             Arrays.asList(jsonTasks)
                         .forEach(task -> auxListTasks.add(Task.convertToTask(task)));
     
@@ -66,7 +71,7 @@ public class TaskRepositoryImpl implements ITaskRepository{
             }
         }
 
-        throw new IdNotFoundException("ID not found");
+        throw new IdNotFoundException();
 
     }
 
@@ -80,7 +85,7 @@ public class TaskRepositoryImpl implements ITaskRepository{
             }
         }
 
-        throw new IdNotFoundException("ID not found");
+        throw new IdNotFoundException();
 
     }
 
@@ -94,7 +99,7 @@ public class TaskRepositoryImpl implements ITaskRepository{
             }
         }
 
-        throw new IdNotFoundException("ID not found");
+        throw new IdNotFoundException();
 
     }
 
@@ -108,6 +113,35 @@ public class TaskRepositoryImpl implements ITaskRepository{
         return listTasks.stream()
                             .filter(task -> task.getStatus().ordinal() == taskStatus.ordinal())
                             .collect(Collectors.toList());
+    }
+
+    @Override
+    public void saveChange(){
+
+        StringBuilder sb = new StringBuilder();
+
+        if(!listTasks.isEmpty()){
+            sb.append("[\n");
+
+
+            for(int i = 0; i<listTasks.size(); i++){           
+                if(i > 0){
+                    sb.append(",\n");
+                }
+                sb.append(Task.convertToJson(listTasks.get(i)));
+            }
+
+
+            sb.append("\n]");
+        }
+
+        try {
+            Files.write(JSON_PATH, sb.toString().getBytes(), StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+
     }
 
 }

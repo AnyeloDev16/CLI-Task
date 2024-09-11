@@ -18,36 +18,40 @@ public class TaskServiceImpl implements ITaskService{
     }
 
     @Override
-    public void updateDescription(Long id, String description) {
+    public void updateDescription(String id, String description) {
         try {
-            repository.updateDescription(id, description);
+            repository.updateDescription(Long.parseLong(id), description);
+            System.out.println(" ==> Updated Task");
         } catch (IdNotFoundException infe) {
             System.out.println(infe.getMessage());
         }
     }
 
     @Override
-    public void markInProgress(Long id) {
+    public void markInProgress(String id) {
         try {
-            repository.updateStatus(id, TaskStatus.IN_PROGRESS);
+            repository.updateStatus(Long.parseLong(id), TaskStatus.IN_PROGRESS);
+            System.out.println(" ==> Task mark in Progress");
         } catch (IdNotFoundException infe) {
             System.out.println(infe.getMessage());
         }
     }
 
     @Override
-    public void markDone(Long id) {
+    public void markDone(String id) {
         try {
-            repository.updateStatus(id, TaskStatus.DONE);
+            repository.updateStatus(Long.parseLong(id), TaskStatus.DONE);
+            System.out.println(" ==> Task mark in Done");
         } catch (IdNotFoundException infe) {
             System.out.println(infe.getMessage());
         }
     }
 
     @Override
-    public void deleteTask(Long id) {
+    public void deleteTask(String id) {
         try {
-            repository.deleteTask(id);
+            repository.deleteTask(Long.parseLong(id));
+            System.out.println(" ==> Deleted Task");
         } catch (IdNotFoundException infe) {
             System.out.println(infe.getMessage());
         }
@@ -71,6 +75,10 @@ public class TaskServiceImpl implements ITaskService{
     @Override
     public List<Task> findAllTaskDone() {
         return repository.findAllTaskFilter(TaskStatus.DONE);
+    }
+
+    public void saveChange(){
+        repository.saveChange();
     }
 
 }

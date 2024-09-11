@@ -7,14 +7,16 @@ import model.Task;
 public interface ITaskService {
 
     Long saveTask(String description);
-    void updateDescription(Long id, String description);
-    void markInProgress(Long id);
-    void markDone(Long id);
-    void deleteTask(Long id);
+    void updateDescription(String id, String description);
+    void markInProgress(String id);
+    void markDone(String id);
+    void deleteTask(String id);
 
     List<Task> findAllTask();
     List<Task> findAllTaskTodo();
     List<Task> findAllTaskInProgress();
     List<Task> findAllTaskDone();
+
+    void saveChange();
 
 }
